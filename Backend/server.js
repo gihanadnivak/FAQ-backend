@@ -1,47 +1,48 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const path = require("path");
 require('dotenv').config();
 
-const app = express();
-const PORT = process.env.PORT || 3000 ;
+const PORT = process.env.PORT || 5000 ;
 const URL = process.env.MONGODB_URL ;
 
-// mongoose.connect(URL ,{
+const app = express();
 
-//     useCreateIndex : true,
-//     useNewUrlParser : true,
-//     useUnifiedTopology : true,
-//     useFindAndModify : false
-// });
+//Allow CORS
+app.use(cors());
 
-mongoose.connect(URL ,{
+//Initialize Body Parser
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
-    //useNewUrlParser: true,
-    useCreateIndex: true
-   // useFindAndModify: false,
-    //useUnifiedTopology: true
-    
-},mongoose.connect(URL,
-    err => {
-        if(err) throw err;
-        console.log(err)
-    })
- );
+// mongoose.set("useCreateIndex", true);
 
+//Import Routes
+const FaqRoute = require("./routes/faq.routes");
 
-const connection = mongoose.connection;
-connection.once("open",() => {
-console.log("Mongodb Connection Sucess !");
-});
+//Use Routes
+app.use("/api/faq", FaqRoute);
 
-const QuestionRouter = require("./routes/Question.js");
-const AnswerRouter = require("./routes/Answer.js");
+mongoose
+  .connect(URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Database Connected Successfully!");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
-app.use("/Question",QuestionRouter);
-app.use("/Answer",AnswerRouter);
-
-app.listen(PORT,()=> {
-    console.log(`server is up and running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log("Server Started on port ", PORT);
 });
 
 
