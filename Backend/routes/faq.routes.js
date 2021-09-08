@@ -20,7 +20,6 @@ router.get("/get", async (req, res) => {
 })
 
 router.post("/add", async (req, res) => {
-    console.log(JSON.parse(JSON.stringify(req.body)))
     if (req.body.question === "" || req.body.topic === "") {
         res.status(400).json({
             message: "Incomplete Request"
@@ -30,7 +29,7 @@ router.post("/add", async (req, res) => {
             question: req.body.question,
             answer: "",
             topic: req.body.topic,
-            categry: req.body.category === "" ? "General" : req.body.category,
+            category: req.body.category === "" ? "General" : req.body.category,
             date: new Date(),
             state: "pending"
         }
@@ -61,6 +60,7 @@ router.put("/edit", async (req, res) => {
             await FAQ.findOneAndUpdate({ _id: req.body.id }, {
                 $set: {
                     answer: req.body.answer,
+                    state: "answered"
                 }
             });
             res.status(200).json({
@@ -79,7 +79,6 @@ router.put("/edit", async (req, res) => {
 })
 
 router.delete("/delete", async (req, res) => {
-
     if (req.body.id === "") {
         res.status(400).json({
             message: "Incomplete Request"

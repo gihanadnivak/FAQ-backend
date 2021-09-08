@@ -10,7 +10,7 @@ const FAQSchema = mongoose.Schema({
     topic: {
         type: String
     },
-    categoty: {
+    category: {
         type: String
     },
     state: {
